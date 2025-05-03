@@ -5,6 +5,7 @@ import models.CartItem;
 import models.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public class StoreService {
     private final List<Product> catalog;
@@ -22,6 +23,9 @@ public class StoreService {
     }
 
     public void addProductToCart(String name, int quantity) {
+        if(quantity <= 0) {
+            throw new IllegalArgumentException("Товаров не может быть меньше 1");
+        }
         for (Product p : catalog) {
             if (p.name().equalsIgnoreCase(name)) {
                 cart.addItem(p, quantity);
@@ -32,23 +36,37 @@ public class StoreService {
         System.out.println("Товар не найден: " + name);
     }
 
-    public void applyDiscount(double percent) {
-        cart.setDiscount(percent);
-    }
-
     public void printCart() {
-        for (CartItem item : cart.getItems()) {
-            System.out.println(item.getProduct().name() + " x" + item.getQuantity() + " = " + item.getTotalPrice());
+        for (Map.Entry<Product, Integer> entry : cart.getItems().entrySet()) {
+            Product product = entry.getKey();
+            int quantity = entry.getValue();
+            double totalPrice = product.price() * quantity;
+            System.out.println(product.name() + " x" + quantity + " = " + totalPrice);
         }
         System.out.println("Итого со скидкой: " + calculateTotal());
     }
 
     public double calculateTotal() {
         double total = 0;
-        for (CartItem item : cart.getItems()) {
-            total += item.getTotalPrice();
+        for (Map.Entry<Product, Integer> entry : cart.getItems().entrySet()) {
+            total += entry.getKey().price() * entry.getValue();
         }
         double discountAmount = total * cart.getDiscountPercent() / 100;
+        if(discountAmount > total) {
+            throw new IllegalArgumentException("Скидка не может быть больше цены товаров");
+        }
         return total - discountAmount;
     }
+
+    public void applyPromoCode(String code) {
+        boolean result = cart.applyPromoCode(code);
+        if (result) {
+            System.out.println("Промокод применён: " + code + " (" + cart.getDiscountPercent() + "% скидка)");
+        } else if (cart.isPromoApplied()) {
+            System.out.println("Промокод уже был применён. Повторное применение невозможно.");
+        } else {
+            System.out.println("Недействительный промокод: " + code);
+        }
+    }
+
 }

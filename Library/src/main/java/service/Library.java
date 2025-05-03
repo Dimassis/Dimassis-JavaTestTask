@@ -19,11 +19,40 @@ public class Library {
 
     public List<Book> searchByTitle(String title) {
         return books.stream()
-                .filter(book -> book.title().contains(title))
+                .filter(book -> book.title().contains(title.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
     public List<Book> listBooks() {
         return new ArrayList<>(books);
     }
+
+    public List<Book> searchByAuthor(String author) {
+        return books.stream()
+                .filter(book -> book.author().toLowerCase().contains(author.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> searchByGenre(String genre) {
+        return books.stream()
+                .filter(book -> book.genre().toLowerCase().contains(genre.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> searchByYear(int year) {
+        return books.stream()
+                .filter(book -> book.year() == year)
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> searchByMultipleParams(String title, String author, String genre, Integer year) {
+        return books.stream()
+                .filter(book -> title == null || book.title().toLowerCase().contains(title.toLowerCase()))
+                .filter(book -> author == null || book.author().toLowerCase().contains(author.toLowerCase()))
+                .filter(book -> genre == null || book.genre().toLowerCase().contains(genre.toLowerCase()))
+                .filter(book -> year == null || book.year() == year)
+                .collect(Collectors.toList());
+    }
+
+
 }

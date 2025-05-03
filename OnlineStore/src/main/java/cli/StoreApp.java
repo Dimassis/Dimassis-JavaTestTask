@@ -40,13 +40,13 @@ public class StoreApp {
                         store.addProductToCart(name, quantity);
                     }
                     case Commands.DISCOUNT -> {
-                        System.out.print("Введите процент скидки: ");
-                        double percent = Double.parseDouble(scanner.nextLine());
-                        store.applyDiscount(percent);
+                        System.out.print("Введите промокод: ");
+                        String percent = String.valueOf(scanner.nextLine());
+                        store.applyPromoCode(percent);
                     }
                     case Commands.LIST -> store.printCart();
                     case Commands.EXIT -> running = false;
-                    default -> System.out.println("Неверный ввод.");
+                    default -> System.out.println("Промкод не найден.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Необработанная ошибка");
